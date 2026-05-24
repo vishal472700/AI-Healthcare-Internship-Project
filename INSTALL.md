@@ -1,0 +1,280 @@
+# Installation Guide
+
+Healthcare Agents ships in two compatible formats:
+
+- `agents/*.md`: full specialist prompts for subagent/rules/custom-instruction systems.
+- generated `SKILL.md` folders: portable skill packages for Claude Skills, OpenCode, and tools that follow the open agent-skills layout.
+
+## Fast Install
+
+```bash
+npx --yes healthcare-agents install
+```
+
+GitHub-backed fallback:
+
+```bash
+npx --yes github:ajhcs/healthcare-agents install
+```
+
+Shell installer fallback:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ajhcs/healthcare-agents/main/install.sh | bash
+```
+
+Use `--dry-run` before writing files:
+
+```bash
+npx --yes healthcare-agents install --all --dry-run
+```
+
+Run doctor to inspect detected tools, target paths, collisions, and existing installed files:
+
+```bash
+npx --yes healthcare-agents doctor
+```
+
+Use `--force` to update an existing install:
+
+```bash
+npx --yes healthcare-agents install --all --force
+```
+
+## Targets
+
+| Target | Command | Writes |
+|---|---|---|
+| Claude Code | `npx --yes healthcare-agents install --claude` | `~/.claude/agents/*.md` |
+| Claude Skills | `npx --yes healthcare-agents install --claude-skills` | `~/.claude/skills/<slug>/SKILL.md` |
+| Claude Desktop | `npx --yes healthcare-agents install --claude-desktop` | `~/.claude/skills/<slug>/SKILL.md` |
+| Claude Cowork | `npx --yes healthcare-agents install --claude-cowork` | `~/.claude/skills/<slug>/SKILL.md` |
+| Codex CLI / App | `npx --yes healthcare-agents install --codex` | `~/.codex/agents/*.md`, `~/.codex/AGENTS.md` |
+| OpenCode | `npx --yes healthcare-agents install --opencode` | `~/.config/opencode/skills/<slug>/SKILL.md` |
+| Open Agent Skills | `npx --yes healthcare-agents install --agent-skills` | `~/.agents/skills/<slug>/SKILL.md` |
+| Cursor | `npx --yes healthcare-agents install --cursor` | `.cursor/rules/*.md` |
+| Windsurf | `npx --yes healthcare-agents install --windsurf` | `.windsurf/rules/*.md` |
+| GitHub Copilot | `npx --yes healthcare-agents install --copilot` | `.github/instructions/*.md` |
+| Gemini CLI | `npx --yes healthcare-agents install --gemini` | `~/.gemini/agents/*.md` |
+| Cline | `npx --yes healthcare-agents install --cline` | `.clinerules/*.md` |
+| Amazon Q Developer | `npx --yes healthcare-agents install --amazonq` | `.amazonq/rules/*.md` |
+| Continue.dev | `npx --yes healthcare-agents install --continue` | `.continue/*.md` |
+| Aider | `npx --yes healthcare-agents install --aider` | managed `.aider.conf.yml` `read:` block |
+| Common skill locations | `npx --yes healthcare-agents install --skills` | Claude, OpenCode, and `.agents` skill folders |
+
+## Claude Code
+
+Claude Code subagents live in:
+
+- project: `.claude/agents/*.md`
+- user: `~/.claude/agents/*.md`
+
+Install globally:
+
+```bash
+npx --yes healthcare-agents install --claude
+```
+
+Invoke naturally:
+
+```text
+Use the revenue-cycle-specialist agent to diagnose denial trends.
+```
+
+The `name` frontmatter field matches the filename slug, as expected by Claude Code. The human-readable name is retained in `display_name`.
+
+## Claude Skills, Desktop, and Cowork
+
+Generate SKILL.md folders:
+
+```bash
+npx --yes healthcare-agents install --claude-skills
+```
+
+Aliases:
+
+```bash
+npx --yes healthcare-agents install --claude-desktop
+npx --yes healthcare-agents install --claude-cowork
+```
+
+Each skill is written to:
+
+```text
+~/.claude/skills/<agent-slug>/SKILL.md
+```
+
+Each generated `SKILL.md` has:
+
+```yaml
+---
+name: revenue-cycle-specialist
+description: >-
+  Healthcare administration specialist...
+license: Apache-2.0
+compatibility: claude-code, claude-desktop, claude-cowork, opencode, codex
+---
+```
+
+## Codex CLI and Codex App
+
+Install:
+
+```bash
+npx --yes healthcare-agents install --codex
+```
+
+This writes:
+
+```text
+~/.codex/agents/*.md
+~/.codex/AGENTS.md
+```
+
+The managed `AGENTS.md` block tells Codex to read the matching specialist prompt before answering healthcare administration requests.
+It also tells Codex to choose one primary specialist, use the agent's `Best Inputs` section when details are missing, respect `quick triage`, `workplan`, `audit/checklist`, and `artifact/template` modes, and name cross-agent handoffs when work spans roles.
+
+For a repo-local Codex App setup, copy the prompts into the repo and add a local `AGENTS.md` note:
+
+```bash
+mkdir -p agents
+cp healthcare-agents/agents/*.md agents/
+```
+
+```markdown
+## Healthcare Agents
+
+When healthcare administration expertise is needed, read the matching file in `agents/*.md` before answering. Choose one primary specialist, use its Best Inputs section when details are missing, respect `quick triage`, `workplan`, `audit/checklist`, and `artifact/template` output modes, and name handoffs when work spans roles. Preserve the selected specialist's role, source hierarchy, compliance boundaries, and deliverable style.
+```
+
+## OpenCode
+
+Install OpenCode skills:
+
+```bash
+npx --yes healthcare-agents install --opencode
+```
+
+This writes:
+
+```text
+~/.config/opencode/skills/<agent-slug>/SKILL.md
+```
+
+OpenCode also discovers Claude-compatible and open-agent-compatible skill paths, so `--skills` is a good portable default:
+
+```bash
+npx --yes healthcare-agents install --skills
+```
+
+## Cursor, Windsurf, Copilot, and Rules-Based Tools
+
+Install into project rule folders:
+
+```bash
+npx --yes healthcare-agents install --cursor
+npx --yes healthcare-agents install --windsurf
+npx --yes healthcare-agents install --copilot
+```
+
+For GitHub Copilot, some setups prefer the `.instructions.md` extension:
+
+```bash
+for f in .github/instructions/*.md; do
+  mv "$f" "${f%.md}.instructions.md"
+done
+```
+
+## Aider
+
+Install:
+
+```bash
+npx --yes healthcare-agents install --aider
+```
+
+This adds a managed block to `.aider.conf.yml`:
+
+```yaml
+# healthcare-agents start
+read:
+  - /path/to/agents/revenue-cycle-specialist.md
+  - /path/to/agents/quality-compliance-officer.md
+# healthcare-agents end
+```
+
+## Custom Directory
+
+Copy the source agent files to any directory:
+
+```bash
+npx --yes healthcare-agents install --path ./vendor/healthcare-agents
+```
+
+## Single-Agent Install
+
+Install one prompt when a full pack is unnecessary:
+
+```bash
+npx --yes healthcare-agents install revenue-cycle-specialist --codex
+npx --yes healthcare-agents install quality-compliance-officer --claude-skills --dry-run
+```
+
+Slugs are validated against `agents/registry.json`; invalid slugs return close-match suggestions.
+
+## CLI Discovery
+
+The package includes registry-backed discovery commands:
+
+```bash
+healthcare-agents list [--domain revenue] [--json]
+healthcare-agents show revenue-cycle-specialist [--json]
+healthcare-agents choose "prior authorization denials are rising" [--json]
+healthcare-agents prompt revenue-cycle-specialist --mode "quick triage"
+```
+
+## Uninstall
+
+```bash
+npx --yes healthcare-agents uninstall --claude
+npx --yes healthcare-agents uninstall --opencode
+npx --yes healthcare-agents uninstall --all
+```
+
+## Self-Improvement Kit
+
+Install the eval loop into another project that already has `agents/*.md`:
+
+```bash
+git clone https://github.com/ajhcs/healthcare-agents.git
+bash healthcare-agents/scripts/install-self-improvement-kit.sh /path/to/project
+```
+
+Installed files:
+
+- `.claude/commands/eval.md`
+- managed `AGENTS.md` block for Codex discovery
+- `eval/rubric.md`
+- `eval/results.tsv`
+- `eval/role-baselines/*.md`
+
+Run in Claude Code:
+
+```text
+/eval revenue-medical-coding-specialist
+```
+
+Run in Codex:
+
+```text
+Run the healthcare self-improvement loop for revenue-medical-coding-specialist.
+```
+
+## Verify
+
+From the repository:
+
+```bash
+bash scripts/lint-agents.sh
+bash install.sh --all --dry-run
+```

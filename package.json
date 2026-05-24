@@ -1,0 +1,61 @@
+{
+  "name": "healthcare-agents",
+  "version": "1.3.0",
+  "description": "Portable prompt and SKILL.md pack with 51 specialist AI agents for US healthcare administration workflows.",
+  "keywords": [
+    "healthcare",
+    "healthcare-administration",
+    "ai-agents",
+    "agent-skills",
+    "claude-code",
+    "codex",
+    "opencode",
+    "cursor-rules",
+    "copilot",
+    "healthcare-ai",
+    "medical-coding",
+    "hipaa",
+    "cms",
+    "revenue-cycle"
+  ],
+  "bin": {
+    "healthcare-agents": "bin/cli.js"
+  },
+  "scripts": {
+    "scorecard": "node scripts/generate-scorecard.js",
+    "test": "bash -n install.sh && bash scripts/lint-agents.sh && python3 scripts/audit-agents.py --top 10 && npm pack --dry-run && node bin/cli.js --help && node bin/cli.js list && bash install.sh --all --dry-run"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    ".claude/commands/eval.md",
+    "AGENTS.md",
+    "agents/",
+    "bin/",
+    "CHANGELOG.md",
+    "docs/assets/",
+    "docs/eval/",
+    "docs/release-notes/",
+    "docs/trust-and-safety.md",
+    "docs/usage/",
+    "eval/meta/",
+    "eval/role-baselines/",
+    "eval/run-logs/README.md",
+    "eval/results.tsv",
+    "eval/rubric.md",
+    "install.sh",
+    "INSTALL.md",
+    "README.md",
+    "scripts/",
+    "VERSION",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajhcs/healthcare-agents.git"
+  },
+  "homepage": "https://github.com/ajhcs/healthcare-agents",
+  "license": "Apache-2.0",
+  "author": "ajhcs"
+}

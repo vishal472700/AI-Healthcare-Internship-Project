@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv/
+venv/
+dist/
+build/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+
+# Eval runtime data
+eval/items/
+eval/results/
+eval/run-logs/*
+!eval/run-logs/README.md
+calibration/
+.worktrees
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
